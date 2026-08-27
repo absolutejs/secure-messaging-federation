@@ -132,12 +132,14 @@ export const activateFederationSession = async (input: {
     );
   const [initiatorValid, responderValid] = await Promise.all([
     input.signatureProvider.verify({
+      destinationDomain: responderDomain,
       expectedDomain: initiatorDomain,
       payload,
       purpose: "federation-transcript",
       signature: input.initiatorConfirmation.signature,
     }),
     input.signatureProvider.verify({
+      destinationDomain: initiatorDomain,
       expectedDomain: responderDomain,
       payload,
       purpose: "federation-transcript",

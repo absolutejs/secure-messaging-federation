@@ -10,6 +10,8 @@ Production deployments must provide authenticated DNS/domain discovery, key
 rotation and revocation, TLS transport, durable replay storage, bounded queues,
 per-peer rate limits, security monitoring, and a deny-by-default peer policy.
 Transport authentication does not replace the signed transcript or envelope.
+Signature providers must bind the source domain, destination domain, signature
+purpose, and exact canonical payload into one cryptographic signature.
 
 Profile comparison is exact and ordered by local preference. Never construct the
 preference list from an unauthenticated peer offer. Never retry failed federation

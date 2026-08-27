@@ -124,6 +124,7 @@ export const verifyFederationEnvelope = async (input: {
   });
   if (
     !(await input.signatureProvider.verify({
+      destinationDomain: envelope.destinationDomain,
       expectedDomain: envelope.originDomain,
       payload: canonicalBytes(envelope),
       purpose: "federation-envelope",

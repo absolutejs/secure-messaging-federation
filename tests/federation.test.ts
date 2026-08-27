@@ -52,7 +52,7 @@ const signatureProvider = (
   localDomain?: string,
 ): FederationSignatureProvider => ({
   id: "test-signatures",
-  sign: async ({ payload, purpose }) => {
+  sign: async ({ destinationDomain, payload, purpose }) => {
     if (localDomain === undefined) throw new Error("Verifier cannot sign.");
     return {
       algorithm: "TEST-SHA-256",
@@ -60,15 +60,23 @@ const signatureProvider = (
       signature: new Uint8Array(
         await crypto.subtle.digest(
           "SHA-256",
-          text.encode(`${localDomain}:${purpose}:${payload.length}`),
+          text.encode(
+            `${localDomain}:${destinationDomain}:${purpose}:${payload.length}`,
+          ),
         ),
       ),
     };
   },
-  verify: async ({ expectedDomain, payload, purpose, signature }) => {
+  verify: async ({
+    destinationDomain,
+    expectedDomain,
+    payload,
+    purpose,
+    signature,
+  }) => {
     if (signature.keyId !== expectedDomain) return false;
     const expected = await signatureProvider(expectedDomain).sign({
-      destinationDomain: "unused.example",
+      destinationDomain,
       payload,
       purpose,
     });

@@ -57,6 +57,7 @@ export type FederationSignatureProvider = {
     readonly purpose: "federation-envelope" | "federation-transcript";
   }) => Promise<FederationSignature>;
   readonly verify: (input: {
+    readonly destinationDomain: string;
     readonly expectedDomain: string;
     readonly payload: Uint8Array;
     readonly purpose: "federation-envelope" | "federation-transcript";
