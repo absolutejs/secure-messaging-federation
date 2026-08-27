@@ -5,6 +5,8 @@ import {
   activateFederationSession,
   confirmFederationTranscript,
   createFederationAbuseReport,
+  decodeSignedFederationEnvelope,
+  encodeSignedFederationEnvelope,
   negotiateFederation,
   signFederationEnvelope,
   verifyFederationEnvelope,
@@ -257,6 +259,58 @@ describe("secure messaging federation", () => {
     ).rejects.toMatchObject({
       code: "replay",
     } satisfies Partial<FederationError>);
+  });
+
+  test("round-trips a strict bounded signed wire envelope", async () => {
+    const { session } = await activate();
+    const signed = await signFederationEnvelope({
+      envelope: {
+        contract: FEDERATION_CONTRACT,
+        createdAt: 1_100,
+        destinationDomain: "bob.example",
+        expiresAt: 1_500,
+        id: "wire-message-1",
+        kind: "application",
+        originDomain: "alice.example",
+        payload: Uint8Array.of(1, 2, 3),
+        routeId: "opaque-route-1",
+        sessionId: session.sessionId,
+        transcriptHash: session.transcriptHash,
+      },
+      limits,
+      localDomain: "alice.example",
+      now: 1_100,
+      session,
+      signatureProvider: signatureProvider("alice.example"),
+    });
+    const encoded = encodeSignedFederationEnvelope(signed);
+    expect(
+      decodeSignedFederationEnvelope(encoded, {
+        maximumEnvelopeBytes: 4_096,
+        maximumPayloadBytes: 2_048,
+        maximumSignatureBytes: 256,
+      }),
+    ).toEqual(signed);
+    const extended = new TextEncoder().encode(
+      JSON.stringify({
+        ...JSON.parse(new TextDecoder().decode(encoded)),
+        plaintextFallback: true,
+      }),
+    );
+    expect(() =>
+      decodeSignedFederationEnvelope(extended, {
+        maximumEnvelopeBytes: 4_096,
+        maximumPayloadBytes: 2_048,
+        maximumSignatureBytes: 256,
+      }),
+    ).toThrow("unknown fields");
+    expect(() =>
+      decodeSignedFederationEnvelope(encoded, {
+        maximumEnvelopeBytes: encoded.length - 1,
+        maximumPayloadBytes: 2_048,
+        maximumSignatureBytes: 256,
+      }),
+    ).toThrow("exceeds policy");
   });
 
   test("seals abuse evidence to a designated key under explicit authorization", async () => {

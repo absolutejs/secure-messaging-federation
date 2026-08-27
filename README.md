@@ -13,6 +13,8 @@ The first release provides:
   session becomes active;
 - signed opaque envelopes bound to that transcript, with expiry, clock-skew,
   size, local-domain, route, and durable replay checks;
+- strict bounded wire codecs and explicit transport acknowledgement, allowing a
+  delivery bridge to acknowledge only after durable MLS processing;
 - confidential abuse-evidence contracts that require a concrete user approval
   or standing-policy mandate and disclose only ciphertext to federation code.
 

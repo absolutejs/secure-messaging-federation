@@ -96,6 +96,10 @@ export type SignedFederationEnvelope = {
 
 export type FederationTransportAdapter = {
   readonly id: string;
+  readonly acknowledge: (input: {
+    readonly cursor: string;
+    readonly localDomain: string;
+  }) => Promise<void>;
   readonly receive: (input: {
     readonly cursor?: string;
     readonly localDomain: string;

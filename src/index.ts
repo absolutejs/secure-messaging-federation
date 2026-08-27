@@ -4,5 +4,6 @@ export * from "./envelope";
 export * from "./errors";
 export * from "./negotiation";
 export * from "./validation";
+export * from "./wire";
 export { FEDERATION_CONTRACT } from "./types";
 export type * from "./types";

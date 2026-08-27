@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0
+
+- Add strict, bounded, canonical wire encoding and decoding for signed federation
+  envelopes, including rejection of extension smuggling and malformed base64url.
+- Add explicit transport acknowledgement so adapters can preserve
+  acknowledge-after-durable-processing delivery semantics.
+
 ## 0.0.3
 
 - Reject missing and non-string token or domain values at runtime instead of

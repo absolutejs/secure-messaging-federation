@@ -21,6 +21,11 @@ Use opaque, random route IDs. Do not encode usernames, email addresses, room
 names, message content, or agent requests in routing metadata or logs. Logs should
 contain bounded event classes and keyed or rotating identifiers.
 
+Decode network envelopes with `decodeSignedFederationEnvelope` before use and
+set all three byte limits from local policy. Transport implementations must not
+acknowledge a cursor until the application has durably processed its complete
+batch; delivery and application replay stores remain separate defenses.
+
 Abuse evidence must be sealed at the endpoint directly to an authorized,
 rotatable moderation key. The evidence provider must bind the report ID, selected
 message IDs, alleged sender, authorization, recipient key, and evidence. A
