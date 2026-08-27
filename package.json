@@ -1,6 +1,6 @@
 {
   "name": "@absolutejs/secure-messaging-federation",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Provider-neutral, downgrade-resistant secure messaging federation for AbsoluteJS.",
   "type": "module",
   "license": "Apache-2.0",

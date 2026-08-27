@@ -12,6 +12,7 @@ import {
   type FederationOffer,
   type FederationProfile,
   type FederationSignatureProvider,
+  type FederationAbuseAuthorization,
 } from "../src";
 
 const text = new TextEncoder();
@@ -299,5 +300,34 @@ describe("secure messaging federation", () => {
       senderAuthenticity: "receiver-asserted",
     });
     expect(report).not.toHaveProperty("plaintext");
+  });
+
+  test("rejects a runtime object with a missing approval identifier", async () => {
+    const invalidAuthorization = {
+      method: "user-approved",
+    } as unknown as FederationAbuseAuthorization;
+    await expect(
+      createFederationAbuseReport({
+        allegedSender: "sender-device-1",
+        authorization: invalidAuthorization,
+        createdAt: 1_000,
+        evidence: Uint8Array.of(1),
+        evidenceProvider: {
+          id: "must-not-run",
+          seal: async () => {
+            throw new Error("Invalid authorization reached evidence sealing.");
+          },
+        },
+        expiresAt: 1_500,
+        maximumEvidenceBytes: 1_024,
+        maximumSealedEvidenceBytes: 2_048,
+        maximumTtlMs: 1_000,
+        messageIds: ["message-1"],
+        reason: "fraud",
+        recipientKeyId: "moderation-key-1",
+        reportId: "report-1",
+        roomId: "opaque-room-1",
+      }),
+    ).rejects.toThrow("Approval ID");
   });
 });

@@ -11,12 +11,16 @@ const DOMAIN =
   /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/u;
 
 export const requireToken = (value: string, label: string): void => {
-  if (!TOKEN.test(value))
+  if (typeof value !== "string" || !TOKEN.test(value))
     throw new FederationError("invalid-input", `${label} is invalid.`);
 };
 
 export const requireDomain = (value: string, label: string): void => {
-  if (value !== value.toLowerCase() || !DOMAIN.test(value))
+  if (
+    typeof value !== "string" ||
+    value !== value.toLowerCase() ||
+    !DOMAIN.test(value)
+  )
     throw new FederationError(
       "invalid-input",
       `${label} must be a canonical DNS domain.`,
