@@ -1,2 +1,4 @@
 dist/
 node_modules/
+changelog.json
+CHANGELOG.md
